@@ -62,4 +62,5 @@ app.all('/*', async (req, res) => {
     })
 })
 
-app.listen(PORT, console.log(`** ECHO Server starts at port ${PORT}`))
+module.exports = app
+// .listen(PORT, console.log(`** ECHO Server starts at port ${PORT}`))
