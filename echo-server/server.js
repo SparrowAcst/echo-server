@@ -19,14 +19,22 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
-app.all('/*', async (req, res) => {
+
+
+const getUserAccount = (req, res, next) => {
+    req.userAccount = JSON.parse(req.cookies.userAccount)
+    res.removeHeader("cookie");
+    next()
+}
+
+app.all('/*', getUserAccount, async (req, res) => {
 
     let authentication = {}
 
     const authorizationHeader = req.headers.authorization
 
     if (authorizationHeader) {
-        // if value starts with "Basic "
+
         if (authorizationHeader.startsWith('Basic ')) {
             const token = authorizationHeader.split(' ')[1]
 
@@ -51,7 +59,11 @@ app.all('/*', async (req, res) => {
         }
     }
 
+    
     res.send({
+        remoteIP: req.ip,
+        hostname: req.hostname,
+        subdomains:req.subdomains,
         headers: req.headers,
         ...authentication,
         cookies: req.cookies,
@@ -59,8 +71,8 @@ app.all('/*', async (req, res) => {
         path: req.path,
         query: req.query,
         body: req.body,
+        userAccount: req.userAccount
     })
 })
 
 module.exports = app
-// .listen(PORT, console.log(`** ECHO Server starts at port ${PORT}`))
