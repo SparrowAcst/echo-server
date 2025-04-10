@@ -1,10 +1,13 @@
 const msal = require('@azure/msal-node');
 const axios = require('axios');
+const fetch = require("./fetch")
 
-const { 
-    msalConfig, 
-    REDIRECT_URI, 
-    POST_LOGOUT_REDIRECT_URI 
+const {
+    msalConfig,
+    REDIRECT_URI,
+    POST_LOGOUT_REDIRECT_URI,
+    GRAPH_API_ENDPOINT,
+    proxy
 } = require('../../.config');
 
 class AuthProvider {
@@ -124,8 +127,43 @@ class AuthProvider {
         };
     }
 
+    async acquireAccessToken(session, options = {}) {
+
+        try {
+            const msalInstance = this.getMsalInstance(this.msalConfig);
+
+            if (session.tokenCache) {
+                msalInstance.getTokenCache().deserialize(session.tokenCache);
+            }
+
+            const tokenResponse = await msalInstance.acquireTokenSilent({
+                account: session.account,
+                scopes: options.scopes || [],
+            });
+
+            session.tokenCache = msalInstance.getTokenCache().serialize();
+            session.appAccessToken = tokenResponse.accessToken;
+            session.idToken = tokenResponse.idToken;
+            session.account = tokenResponse.account;
+
+            return tokenResponse
+
+        } catch (error) {
+            // if (error instanceof msal.InteractionRequiredAuthError) {
+            //     return this.login({
+            //         scopes: options.scopes || [],
+            //         redirectUri: options.redirectUri,
+            //         successRedirect: options.successRedirect || '/',
+            //     })(req, res, next);
+            // }
+
+            // next(error);
+        }
+    }
+
     handleRedirect(options = {}) {
         return async (req, res, next) => {
+
             if (!req.body || !req.body.state) {
                 return next(new Error('Error: response not found'));
             }
@@ -149,6 +187,14 @@ class AuthProvider {
                 req.session.idToken = tokenResponse.idToken;
                 req.session.account = tokenResponse.account;
                 req.session.isAuthenticated = true;
+
+                if (!req.session.userProfile) {
+                    await this.acquireAccessToken(req.session, { scopes: ["User.Read"] })
+                    const profile = await fetch(`${GRAPH_API_ENDPOINT}/v1.0/me`, req.session.appAccessToken)
+                    req.session.userProfile = profile
+                }
+
+                await this.acquireAccessToken(req.session, proxy.requireAccess)
 
                 const state = JSON.parse(this.cryptoProvider.base64Decode(req.body.state));
 
@@ -306,8 +352,12 @@ router.get('/signout', authProvider.logout({
 
 const middleware = (req, res, next) => {
 
+
     if (!req.session.isAuthenticated) {
         return res.redirect('/auth/signin'); // redirect to sign-in route
+    }
+    if (!req.session.appAccessToken) {
+        res.status(403).send("Forbidden")
     }
 
     next();
@@ -320,4 +370,4 @@ module.exports = {
     authProvider,
     router,
     middleware
-}    
+}

@@ -23,6 +23,8 @@ app.use(bodyParser.json());
 
 const getUserAccount = (req, res, next) => {
     req.userAccount = JSON.parse(req.cookies.userAccount)
+    req.userProfile = JSON.parse(req.cookies.userProfile)
+    
     res.removeHeader("cookie");
     next()
 }
@@ -71,7 +73,8 @@ app.all('/*', getUserAccount, async (req, res) => {
         path: req.path,
         query: req.query,
         body: req.body,
-        userAccount: req.userAccount
+        userAccount: req.userAccount,
+        userProfile: req.userProfile
     })
 })
 
