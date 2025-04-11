@@ -29,7 +29,7 @@ class AuthProvider {
              */
             const state = this.cryptoProvider.base64Encode(
                 JSON.stringify({
-                    successRedirect: options.successRedirect || '/',
+                    successRedirect: req.query.callback || '/' //options.successRedirect || '/',
                 })
             );
 
@@ -187,17 +187,19 @@ class AuthProvider {
                 req.session.idToken = tokenResponse.idToken;
                 req.session.account = tokenResponse.account;
                 req.session.isAuthenticated = true;
+                try {
+                    if (!req.session.userProfile) {
+                        await this.acquireAccessToken(req.session, { scopes: ["User.Read.All"] })
+                        req.session.userProfile = await fetch(GRAPH_API_ENDPOINT.profile, req.session.appAccessToken)
+                        let groups = await fetch(GRAPH_API_ENDPOINT.groups, req.session.appAccessToken)
+                        req.session.userProfile.groups = groups.value.map(d => d.id)
+                    }    
 
-                if (!req.session.userProfile) {
-                    await this.acquireAccessToken(req.session, { scopes: ["User.Read"] })
-                    const profile = await fetch(`${GRAPH_API_ENDPOINT}/v1.0/me`, req.session.appAccessToken)
-                    req.session.userProfile = profile
-                }
-
-                await this.acquireAccessToken(req.session, proxy.requireAccess)
-
+                    await this.acquireAccessToken(req.session, proxy.requireAccess)
+                } catch (e) {
+                    console.log(e.toString(), e.stack)
+                }    
                 const state = JSON.parse(this.cryptoProvider.base64Decode(req.body.state));
-
                 res.redirect(state.successRedirect);
             } catch (error) {
                 next(error);
@@ -351,13 +353,16 @@ router.get('/signout', authProvider.logout({
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const middleware = (req, res, next) => {
-
-
     if (!req.session.isAuthenticated) {
-        return res.redirect('/auth/signin'); // redirect to sign-in route
+        return res.redirect(`/auth/signin?callback=${req.originalUrl}`); // redirect to sign-in route
     }
+    
     if (!req.session.appAccessToken) {
         res.status(403).send("Forbidden")
+    }
+    
+    if(!req.session.userProfile || !(req.session.userProfile.groups || []).includes(proxy.requireAccess.group)){
+       res.status(403).send("Forbidden")    
     }
 
     next();

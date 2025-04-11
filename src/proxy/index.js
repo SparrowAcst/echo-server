@@ -15,7 +15,7 @@ const createMidlleware = target => createProxyMiddleware({
         proxyReq.setHeader('cookie', `userAccount=${JSON.stringify(req.session.account)}; userProfile=${JSON.stringify(req.session.userProfile)}`)
 
         if (
-            // ["POST", "PUT"].includes(req.method) && 
+            ["POST", "PUT"].includes(req.method) && 
             req.body
         ) {
 
@@ -26,7 +26,7 @@ const createMidlleware = target => createProxyMiddleware({
             }
 
             if (body) {
-                proxyReq.setHeader('content-length', body.length);
+                proxyReq.setHeader('content-length', Buffer.byteLength(body));
                 // Write out body changes to the proxyReq stream
                 proxyReq.write(body);
                 proxyReq.end();

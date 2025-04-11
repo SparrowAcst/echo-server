@@ -74,7 +74,7 @@ app.all('/*', getUserAccount, async (req, res) => {
         query: req.query,
         body: req.body,
         userAccount: req.userAccount,
-        userProfile: req.userProfile
+        userProfile: req.userProfile,
     })
 })
 
