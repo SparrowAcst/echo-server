@@ -10,11 +10,12 @@ var axios = require('axios');
  * @param endpoint: REST API endpoint to call
  * @param accessToken: raw access token string
  */
-async function fetch(endpoint, accessToken) {
+async function fetch(endpoint, accessToken, responseType) {
     const options = {
         headers: {
             Authorization: `Bearer ${accessToken}`
-        }
+        },
+        responseType
     };
 
     console.log(`request made to ${endpoint} at: ` + new Date().toString());

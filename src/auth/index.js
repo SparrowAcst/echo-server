@@ -10,6 +10,22 @@ const {
     proxy
 } = require('../../.config');
 
+
+const getUserPhoto = async accessToken => {
+    try {
+
+        let photo = await fetch(GRAPH_API_ENDPOINT.photo, accessToken, 'arraybuffer')
+        const base64String = Buffer.from(photo, "binary").toString('base64')
+        const result = `data:image/jpeg;base64,${base64String}`
+        return result
+
+    } catch(e) {
+        return 
+    }
+
+}
+
+
 class AuthProvider {
     msalConfig;
     cryptoProvider;
@@ -193,8 +209,8 @@ class AuthProvider {
                         req.session.userProfile = await fetch(GRAPH_API_ENDPOINT.profile, req.session.appAccessToken)
                         let groups = await fetch(GRAPH_API_ENDPOINT.groups, req.session.appAccessToken)
                         req.session.userProfile.groups = groups.value.map(d => d.id)
+                        req.session.userPhoto = await getUserPhoto(req.session.appAccessToken)
                     }    
-
                     await this.acquireAccessToken(req.session, proxy.requireAccess)
                 } catch (e) {
                     console.log(e.toString(), e.stack)

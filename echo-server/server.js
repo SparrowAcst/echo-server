@@ -22,14 +22,24 @@ app.use(bodyParser.json());
 
 
 const getUserAccount = (req, res, next) => {
+    try {
     req.userAccount = JSON.parse(req.cookies.userAccount)
     req.userProfile = JSON.parse(req.cookies.userProfile)
+    if(req.body && req.body.$$userPhoto){
+        req.userProfile.photo = req.body.$$userPhoto
+        delete req.body.$$userPhoto
+    }    
     
     res.removeHeader("cookie");
+    
+    } catch (e) {
+        console.log("ERROR", e.toString(), e.stack)
+    }
     next()
 }
 
 app.all('/*', getUserAccount, async (req, res) => {
+
 
     let authentication = {}
 
@@ -61,7 +71,6 @@ app.all('/*', getUserAccount, async (req, res) => {
         }
     }
 
-    
     res.send({
         remoteIP: req.ip,
         hostname: req.hostname,
@@ -77,5 +86,22 @@ app.all('/*', getUserAccount, async (req, res) => {
         userProfile: req.userProfile,
     })
 })
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+});
 
 module.exports = app

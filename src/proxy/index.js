@@ -21,6 +21,7 @@ const createMidlleware = target => createProxyMiddleware({
 
             let body
             if (req.body) {
+                req.body.$$userPhoto = req.session.userPhoto
                 body = JSON.stringify(req.body)
                 delete req.body;
             }
