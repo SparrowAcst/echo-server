@@ -18,15 +18,15 @@ const proxyServer = express();
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-proxyServer.use(session({
-    secret: EXPRESS_SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: false, // set this to true on production
-    }
-}));
+// proxyServer.use(session({
+//     secret: EXPRESS_SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         httpOnly: true,
+//         secure: false, // set this to true on production
+//     }
+// }));
 
 
 proxyServer.use(logger('dev'));
@@ -46,32 +46,34 @@ proxyServer.use(bodyParser.json({
 proxyServer.use(cookieParser());
 proxyServer.use(express.urlencoded({ extended: false }));
 
-proxyServer.use('/auth', authRouter);
+// proxyServer.use('/auth', authRouter);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 proxy.targets.forEach(target => {
-    proxyServer.use(target.path, isAuthenticated, createProxyMiddleware(target));    
+    proxyServer.use(target.path, 
+        // isAuthenticated, 
+        createProxyMiddleware(target));    
 })
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // catch 404 and forward to error handler
-proxyServer.use(function(req, res, next) {
-    next(createError(404));
-});
+// proxyServer.use(function(req, res, next) {
+//     next(createError(404));
+// });
 
-// error handler
-proxyServer.use(function(err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+// // error handler
+// proxyServer.use(function(err, req, res, next) {
+//     // set locals, only providing error in development
+//     res.locals.message = err.message;
+//     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
-});
+//     // render the error page
+//     res.status(err.status || 500);
+//     res.render('error');
+// });
 
 
 module.exports = proxyServer

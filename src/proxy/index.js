@@ -12,7 +12,7 @@ const createMidlleware = target => createProxyMiddleware({
     
     onProxyReq: (proxyReq, req, res) => {
 
-        proxyReq.setHeader('cookie', `userAccount=${JSON.stringify(req.session.account)}; userProfile=${JSON.stringify(req.session.userProfile)}`)
+        // proxyReq.setHeader('cookie', `userAccount=${JSON.stringify(req.session.account)}; userProfile=${JSON.stringify(req.session.userProfile)}`)
 
         if (
             ["POST", "PUT"].includes(req.method) && 
