@@ -11,7 +11,7 @@ const createMidlleware = target => createProxyMiddleware({
     cookieDomainRewrite: `${target.host}`,
     
     onProxyReq: (proxyReq, req, res) => {
-
+        
         proxyReq.setHeader('cookie', `userAccount=${JSON.stringify(req.session.account)}; userProfile=${JSON.stringify(req.session.userProfile)}`)
 
         if (
