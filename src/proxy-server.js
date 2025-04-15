@@ -46,16 +46,11 @@ proxyServer.use(bodyParser.json({
 proxyServer.use(cookieParser());
 proxyServer.use(express.urlencoded({ extended: false }));
 
-// proxyServer.use('/auth', authRouter);
+proxyServer.use('/auth', authRouter);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// proxy.targets.forEach(target => {
-    // proxyServer.use( isAuthenticated, createProxyMiddleware(proxy.router));    
-    // console.log(target)
-    proxyServer.use( createProxyMiddleware(proxy));    
-// })
-
+proxyServer.use(isAuthenticated, createProxyMiddleware(proxy));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,5 +72,3 @@ proxyServer.use(express.urlencoded({ extended: false }));
 
 
 module.exports = proxyServer
-
-

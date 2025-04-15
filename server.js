@@ -11,5 +11,5 @@ const frontServer = require("./front-server/server")
 
 
 proxyServer.listen(proxy.PORT, console.log(`PROXY Server starts on ${proxy.PORT} port`));
-// echoServer.listen(ECHO_PORT, console.log(`ECHO Server starts on ${ECHO_PORT} port`));
-// frontServer.listen(FRONT_PORT, console.log(`FRONT Server starts on ${FRONT_PORT} port`));
+echoServer.listen(ECHO_PORT, console.log(`ECHO Server starts on ${ECHO_PORT} port`));
+frontServer.listen(FRONT_PORT, console.log(`FRONT Server starts on ${FRONT_PORT} port`));
