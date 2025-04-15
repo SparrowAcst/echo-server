@@ -1,0 +1,39 @@
+@startuml
+
+actor ADE_USER
+actor CLINIC_USER
+actor SPECTROGRAM_USER
+
+node ADE_PROXY <<proxy>>{
+  label "scopes:\napi://ade-api/ade.access"
+}
+node ADE
+
+node CLINIC_PROXY <<proxy>>{
+  label "scopes:\napi://ade-api/clinic.access"
+}  
+node CLINIC
+
+node SPECTROGRAM_PROXY <<proxy>>{
+  label "scopes:\napi://ade-api/spectrogram.access"
+}  
+node SPECTROGRAM_API
+node SPECTROGRAM
+
+ADE_USER -- ADE_PROXY: https://ade.bioacoustics.ai/*
+ADE_PROXY -- ADE: /* 
+ADE_PROXY -- SPECTROGRAM_API: /spectrogram/api/* 
+ADE_PROXY -- SPECTROGRAM: /spectrogram/* 
+
+CLINIC_USER -- CLINIC_PROXY: https://clinic.bioacoustics.ai/*
+CLINIC_PROXY -- CLINIC: /* 
+CLINIC_PROXY -- SPECTROGRAM_API: /spectrogram/api/* 
+CLINIC_PROXY -- SPECTROGRAM: /spectrogram/* 
+
+
+SPECTROGRAM_USER -u- SPECTROGRAM_PROXY: https://spectrogram.bioacoustics.ai/*
+SPECTROGRAM_PROXY -u- SPECTROGRAM: /* 
+SPECTROGRAM_PROXY -u- SPECTROGRAM_API: /api/* 
+
+
+@enduml

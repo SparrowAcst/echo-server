@@ -2,16 +2,16 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-
+const path = require("path")
 const PORT = 3000
 
 const app = express()
 app.use(express.urlencoded({ extended: true }))
-app.use(
-    cors({
-        origin: '*',
-    }),
-)
+// app.use(
+//     cors({
+//         origin: '*',
+//     }),
+// )
 app.use(cookieParser())
 app.disable('x-powered-by')
 app.use(bodyParser.text());
@@ -38,7 +38,7 @@ const getUserAccount = (req, res, next) => {
     next()
 }
 
-app.all('/*', getUserAccount, async (req, res) => {
+app.all('/api/*', getUserAccount, async (req, res) => {
 
 
     let authentication = {}
@@ -88,7 +88,11 @@ app.all('/*', getUserAccount, async (req, res) => {
 })
 
 
-// catch 404 and forward to error handler
+app.use(express.static(path.resolve("./front-server/static")))
+
+
+
+// // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
 //     next(createError(404));
 // });
