@@ -48,10 +48,11 @@ proxyServer.use(bodyParser.json({
 
 proxyServer.use(cookieParser());
 proxyServer.use(express.urlencoded({ extended: false }));
-proxyServer.use(CORS())
     
 
 proxyServer.use('/auth', authRouter);
+
+proxyServer.use(CORS())
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
