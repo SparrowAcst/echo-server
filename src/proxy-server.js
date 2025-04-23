@@ -1,7 +1,10 @@
+
+
 const { extend } = require("lodash")
 var path = require('path');
 var express = require('express');
 var session = require('express-session');
+const CORS = require("cors")
 var createError = require('http-errors');
 var cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -45,6 +48,8 @@ proxyServer.use(bodyParser.json({
 
 proxyServer.use(cookieParser());
 proxyServer.use(express.urlencoded({ extended: false }));
+app.use(CORS())
+    
 
 proxyServer.use('/auth', authRouter);
 
