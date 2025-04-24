@@ -53,20 +53,20 @@ proxyServer.use(express.urlencoded({ extended: false }));
 
 proxyServer.use('/auth', authRouter);
 
-proxyServer.use((req, res, next) => {
-    console.log("request.headers before CORS")
-    console.log(req.headers)
-})
+// proxyServer.use((req, res, next) => {
+//     console.log("request.headers before CORS")
+//     console.log(req.headers)
+// })
 
-proxyServer.use(CORS({
-    origin: "https://spectrogram.bioacoustics.ai"
-}))
+// proxyServer.use(CORS({
+//     origin: "https://spectrogram.bioacoustics.ai"
+// }))
 
 
-proxyServer.use((req, res, next) => {
-    console.log("request.headers After CORS")
-    console.log(req.headers)
-})
+// proxyServer.use((req, res, next) => {
+//     console.log("request.headers After CORS")
+//     console.log(req.headers)
+// })
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
