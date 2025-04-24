@@ -58,9 +58,9 @@ proxyServer.use('/auth', authRouter);
 //     console.log(req.headers)
 // })
 
-// proxyServer.use(CORS({
-//     origin: "https://spectrogram.bioacoustics.ai"
-// }))
+proxyServer.use(CORS({
+    origin: "https://spectrogram.bioacoustics.ai"
+}))
 
 
 // proxyServer.use((req, res, next) => {
