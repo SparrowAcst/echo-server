@@ -59,10 +59,10 @@ proxyServer.use('/auth', authRouter);
 // })
 
 proxyServer.use(CORS({
-    origin: [
-        "https://spectrogram.bioacoustics.ai",
-        "https://login.microsoftonline.com"
-    ]    
+    // origin: [
+    //     "https://spectrogram.bioacoustics.ai",
+    //     "https://login.microsoftonline.com"
+    // ]    
 }))
 
 
