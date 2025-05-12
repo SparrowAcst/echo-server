@@ -184,6 +184,10 @@ class AuthProvider {
                 return next(new Error('Error: response not found'));
             }
 
+            console.log("-------------------- handleRedirect -----------------------------------------")
+            console.log(req.originalUrl)
+            console.log(req.session)
+
             const authCodeRequest = {
                 ...req.session.authCodeRequest,
                 code: req.body.code,
@@ -265,13 +269,18 @@ class AuthProvider {
         return async (req, res, next) => {
             // Generate PKCE Codes before starting the authorization flow
             const { verifier, challenge } = await this.cryptoProvider.generatePkceCodes();
-
+            
+            console.log("------------------------- redirectToAuthCodeUrl ----------------------------------------")
+            
             // Set generated PKCE codes and method as session vars
             req.session.pkceCodes = {
                 challengeMethod: 'S256',
                 verifier: verifier,
                 challenge: challenge,
             };
+
+            console.log(req.session.pkceCodes)
+
 
             /**
              * By manipulating the request objects below before each request, we can obtain
