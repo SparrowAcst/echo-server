@@ -188,13 +188,21 @@ class AuthProvider {
             console.log(req.originalUrl)
             console.log(req.session)
 
-            const authCodeRequest = {
-                ...req.session.authCodeRequest,
-                code: req.body.code,
-                codeVerifier: req.session.pkceCodes.verifier,
-            };
+            // const authCodeRequest = {
+            //     ...req.session.authCodeRequest,
+            //     code: req.body.code,
+            //     codeVerifier: req.session.pkceCodes.verifier,
+            // };
 
             try {
+                
+                const authCodeRequest = {
+                    ...req.session.authCodeRequest,
+                    code: req.body.code,
+                    codeVerifier: req.session.pkceCodes.verifier,
+                };
+
+                
                 const msalInstance = this.getMsalInstance(this.msalConfig);
 
                 if (req.session.tokenCache) {
@@ -378,6 +386,7 @@ router.get('/signout', authProvider.logout({
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const middleware = (req, res, next) => {
+    
     if (!req.session.isAuthenticated) {
         return res.redirect(`/auth/signin?callback=${req.originalUrl}`); // redirect to sign-in route
     }
