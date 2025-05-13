@@ -386,6 +386,11 @@ router.get('/signout', authProvider.logout({
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const middleware = (req, res, next) => {
+
+    if(req.originalUrl == "/manifest.json"){
+        next()
+        return
+    }
     
     if (!req.session.isAuthenticated) {
         return res.redirect(`/auth/signin?callback=${req.originalUrl}`); // redirect to sign-in route
