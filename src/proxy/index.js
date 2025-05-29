@@ -46,12 +46,23 @@ const createMidlleware = proxy => {
 
                 proxyReq.setHeader('cookie', `userAccount=${JSON.stringify(req.session.account)}; userProfile=${JSON.stringify(req.session.userProfile)}`)
 
+                
+                if (
+                    req.headers['content-type'] &&
+                    req.headers['content-type'].match(/^multipart\/form-data/)
+                ){
+                    return
+                }
+
+
                 if (
                     ["POST", "PUT"].includes(req.method) &&
                     req.body
                 ) {
 
                     let body
+                    
+                    
                     if (req.body) {
                         req.body.$$userPhoto = req.session.userPhoto
                         body = JSON.stringify(req.body)
